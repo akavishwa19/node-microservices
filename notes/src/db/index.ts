@@ -1,0 +1,24 @@
+import mariadb from "mariadb";
+
+const pool = mariadb.createPool({
+  host: "localhost",
+  port: 3307,
+  user: "root",
+  password: "admin",
+  database: "testdb",
+  connectionLimit: 5,
+});
+
+async function connectDB(): Promise<void> {
+  try {
+    const conn = await pool.getConnection();
+    console.log("connected to maria db succesfully");
+    const data = await pool.query("SHOW DATABASES");
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+    throw new Error("error connecting to database");
+  }
+}
+
+export { connectDB, pool };
