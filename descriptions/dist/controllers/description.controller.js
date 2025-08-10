@@ -1,5 +1,6 @@
 import { addDescriptionQuery, fetchAllDescriptionsQuery, fetchSingleDescriptionQuery, updateDescriptionQuery, deleteDescriptionQuery, } from "../utils/sqlQueries.js";
 import { pool } from "../db/index.js";
+import validateNoteId from "../services/validateNoteId.js";
 const addDescription = async (req, res) => {
     try {
         const data = req.body;
@@ -7,6 +8,14 @@ const addDescription = async (req, res) => {
             return res.status(400).json({
                 status: 400,
                 message: "Please send some data to be added",
+            });
+        }
+        const { note_id } = data;
+        const isNoteValid = await validateNoteId(note_id);
+        if (!isNoteValid) {
+            return res.status(400).json({
+                status: 400,
+                message: "The note with given note_id doesnt exist",
             });
         }
         const note = await pool.query(addDescriptionQuery(data));
