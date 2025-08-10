@@ -76,6 +76,13 @@ const updateNote = async (req, res) => {
                 message: "Please send id with appropriate data to update the note",
             });
         }
+        const existingNote = await pool.query(fetchSingleNoteQuery(id));
+        if (existingNote.length == 0) {
+            return res.status(400).json({
+                status: 400,
+                message: "Note with given id not found",
+            });
+        }
         const updatedNote = await pool.query(updateNoteQuery(id, data));
         return res.status(200).json({
             status: 200,
