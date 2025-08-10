@@ -11,7 +11,6 @@ const addDescriptionQuery = (queryObject: any): string => {
     })
     .join(",");
 
-
   return `INSERT INTO descriptions (${columns}) VALUES(
             ${values}
     )`;
@@ -43,10 +42,15 @@ const deleteDescriptionQuery = (id: string): string => {
   return `DELETE FROM descriptions WHERE id='${id}'`;
 };
 
+const deleteDescriptionsViaNoteQuery = (id: string): string => {
+  return `DELETE FROM descriptions WHERE note_id='${id}';`;
+};
+
 export {
   addDescriptionQuery,
   fetchAllDescriptionsQuery,
   fetchSingleDescriptionQuery,
   updateDescriptionQuery,
   deleteDescriptionQuery,
+  deleteDescriptionsViaNoteQuery,
 };

@@ -36,5 +36,8 @@ const updateDescriptionQuery = (id, updateFields) => {
 const deleteDescriptionQuery = (id) => {
     return `DELETE FROM descriptions WHERE id='${id}'`;
 };
-export { addDescriptionQuery, fetchAllDescriptionsQuery, fetchSingleDescriptionQuery, updateDescriptionQuery, deleteDescriptionQuery, };
+const deleteDescriptionsViaNoteQuery = (id) => {
+    return `DELETE FROM descriptions WHERE note_id='${id}';`;
+};
+export { addDescriptionQuery, fetchAllDescriptionsQuery, fetchSingleDescriptionQuery, updateDescriptionQuery, deleteDescriptionQuery, deleteDescriptionsViaNoteQuery, };
 //# sourceMappingURL=sqlQueries.js.map

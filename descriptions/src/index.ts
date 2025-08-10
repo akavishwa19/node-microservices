@@ -1,7 +1,10 @@
+import  amqp  from 'amqplib';
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./db/index.js";
+import rabbitMqConnection from "./services/queueConnection.js";
+import subscribeToQueueAndDeleteDescriptions from "./services/subDescriptionDeletion.js";
 
 const app = express();
 app.use(cors());
@@ -21,7 +24,13 @@ app.use("/api/v1/descriptions", descriptionRouter);
 
 const port = Number(process.env.PORT);
 
+let channel:amqp.Channel;
+
 app.listen(port, async () => {
   await connectDB();
+  channel = await rabbitMqConnection("amqp://localhost");
+  subscribeToQueueAndDeleteDescriptions()
   console.log("server listening on port:" + port);
 });
+
+export {channel}

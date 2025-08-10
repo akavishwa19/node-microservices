@@ -2,6 +2,8 @@ import express, {} from "express";
 import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./db/index.js";
+import rabbitMqConnection from "./services/queueConnection.js";
+import amqp from "amqplib";
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -17,8 +19,11 @@ app.get("/health", async (req, res) => {
 import noteRouter from "./routes/note.route.js";
 app.use("/api/v1/notes", noteRouter);
 const port = Number(process.env.PORT);
+let channel;
 app.listen(port, async () => {
     await connectDB();
+    channel = await rabbitMqConnection("amqp://localhost");
     console.log("server listening on port:" + port);
 });
+export { channel };
 //# sourceMappingURL=index.js.map

@@ -7,6 +7,7 @@ import {
   deleteNoteQuery,
 } from "../utils/sql.Queries.js";
 import { pool } from "../db/index.js";
+import {channel} from "../index.js";
 
 const addNote = async (req: Request, res: Response) => {
   try {
@@ -138,6 +139,9 @@ const deleteNote = async (req: Request, res: Response) => {
     }
 
     await pool.query(deleteNoteQuery(id));
+
+    channel.sendToQueue("note_queue",Buffer.from(id));
+
     return res.status(200).json({
       status: 200,
       message: "Note deleted succesfully",
