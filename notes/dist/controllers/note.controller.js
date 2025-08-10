@@ -51,10 +51,17 @@ const fetchSingleNote = async (req, res) => {
                 message: "Please provide the note id",
             });
         }
+        const existingNote = await pool.query(fetchSingleNoteQuery(id));
+        if (existingNote.length == 0) {
+            return res.status(400).json({
+                status: 400,
+                message: "Note with given id not found",
+            });
+        }
         const data = await pool.query(fetchSingleNoteQuery(id));
         return res.status(200).json({
             status: 200,
-            message: "All Notes fetched succesfully",
+            message: " Note fetched succesfully",
             data: data,
         });
     }

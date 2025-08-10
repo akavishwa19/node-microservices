@@ -60,10 +60,19 @@ const fetchSingleDescription = async (req: Request, res: Response) => {
         message: "Please provide the note id",
       });
     }
+
+    const existingNote = await pool.query(fetchSingleDescriptionQuery(id));
+    if (existingNote.length == 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Description with given id not found",
+      });
+    }
+
     const data = await pool.query(fetchSingleDescriptionQuery(id));
     return res.status(200).json({
       status: 200,
-      message: "All Descriptions fetched succesfully",
+      message: "Description fetched succesfully",
       data: data,
     });
   } catch (error: any) {
@@ -120,7 +129,7 @@ const deleteDescription = async (req: Request, res: Response) => {
       });
     }
 
-     const existingNote = await pool.query(fetchSingleDescriptionQuery(id));
+    const existingNote = await pool.query(fetchSingleDescriptionQuery(id));
     if (existingNote.length == 0) {
       return res.status(400).json({
         status: 400,
@@ -143,4 +152,10 @@ const deleteDescription = async (req: Request, res: Response) => {
   }
 };
 
-export { addDescription, fetchAllDescriptions, fetchSingleDescription, updateDescription, deleteDescription };
+export {
+  addDescription,
+  fetchAllDescriptions,
+  fetchSingleDescription,
+  updateDescription,
+  deleteDescription,
+};

@@ -51,10 +51,17 @@ const fetchSingleDescription = async (req, res) => {
                 message: "Please provide the note id",
             });
         }
+        const existingNote = await pool.query(fetchSingleDescriptionQuery(id));
+        if (existingNote.length == 0) {
+            return res.status(400).json({
+                status: 400,
+                message: "Description with given id not found",
+            });
+        }
         const data = await pool.query(fetchSingleDescriptionQuery(id));
         return res.status(200).json({
             status: 200,
-            message: "All Descriptions fetched succesfully",
+            message: "Description fetched succesfully",
             data: data,
         });
     }
@@ -129,5 +136,5 @@ const deleteDescription = async (req, res) => {
         });
     }
 };
-export { addDescription, fetchAllDescriptions, fetchSingleDescription, updateDescription, deleteDescription };
+export { addDescription, fetchAllDescriptions, fetchSingleDescription, updateDescription, deleteDescription, };
 //# sourceMappingURL=description.controller.js.map
