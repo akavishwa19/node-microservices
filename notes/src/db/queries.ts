@@ -4,7 +4,8 @@ const createNotesTable=():string=>{
         id UUID PRIMARY KEY DEFAULT UUID(),
         title VARCHAR(40),
         is_finsihed BOOLEAN DEFAULT FALSE,
-        bookmarked BOOLEAN DEFAULT FALSE
+        bookmarked BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`
 }
 
