@@ -6,7 +6,6 @@ import {
   updateNoteQuery,
   deleteNoteQuery,
 } from "../utils/sql.Queries.js";
-import type { DefaultError } from "../types/error.type.js";
 import { pool } from "../db/index.js";
 
 const addNote = async (req: Request, res: Response) => {
@@ -118,6 +117,14 @@ const deleteNote = async (req: Request, res: Response) => {
       return res.status(400).json({
         status: 400,
         message: "Please provide the note id",
+      });
+    }
+
+     const existingNote = await pool.query(fetchSingleNoteQuery(id));
+    if (existingNote.length == 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Note with given id not found",
       });
     }
 

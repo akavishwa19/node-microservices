@@ -107,6 +107,13 @@ const deleteNote = async (req, res) => {
                 message: "Please provide the note id",
             });
         }
+        const existingNote = await pool.query(fetchSingleNoteQuery(id));
+        if (existingNote.length == 0) {
+            return res.status(400).json({
+                status: 400,
+                message: "Note with given id not found",
+            });
+        }
         await pool.query(deleteNoteQuery(id));
         return res.status(200).json({
             status: 200,
