@@ -19,15 +19,15 @@ app.get("/health", async (req: Request, res: Response) => {
 });
 
 import noteRouter from "./routes/note.route.js";
-app.use("/api/v1/notes", noteRouter);
+app.use("/", noteRouter);
 
 const port = Number(process.env.PORT);
 
 let channel: amqp.Channel;
 
 app.listen(port, async () => {
-  await connectDB();
-  channel = await rabbitMqConnection("amqp://localhost");
+  // await connectDB();
+  // channel = await rabbitMqConnection("amqp://localhost");
   console.log("server listening on port:" + port);
 });
 

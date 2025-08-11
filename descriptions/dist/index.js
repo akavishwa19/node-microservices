@@ -18,13 +18,13 @@ app.get("/health", async (req, res) => {
     }
 });
 import descriptionRouter from "./routes/description.route.js";
-app.use("/api/v1/descriptions", descriptionRouter);
+app.use("/", descriptionRouter);
 const port = Number(process.env.PORT);
 let channel;
 app.listen(port, async () => {
-    await connectDB();
-    channel = await rabbitMqConnection("amqp://localhost");
-    subscribeToQueueAndDeleteDescriptions();
+    // await connectDB();
+    // channel = await rabbitMqConnection("amqp://localhost");
+    // subscribeToQueueAndDeleteDescriptions()
     console.log("server listening on port:" + port);
 });
 export { channel };
