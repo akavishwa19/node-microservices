@@ -27,9 +27,9 @@ const port = Number(process.env.PORT);
 let channel:amqp.Channel;
 
 app.listen(port, async () => {
-  // await connectDB();
-  // channel = await rabbitMqConnection("amqp://localhost");
-  // subscribeToQueueAndDeleteDescriptions()
+  await connectDB();
+  channel = await rabbitMqConnection("amqp://localhost");
+  subscribeToQueueAndDeleteDescriptions()
   console.log("server listening on port:" + port);
 });
 

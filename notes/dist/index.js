@@ -17,7 +17,7 @@ app.get("/health", async (req, res) => {
     }
 });
 import noteRouter from "./routes/note.route.js";
-app.use("/api/v1/notes", noteRouter);
+app.use("/", noteRouter);
 const port = Number(process.env.PORT);
 let channel;
 app.listen(port, async () => {

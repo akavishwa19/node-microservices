@@ -1,7 +1,7 @@
 import axios from "axios";
 const validateNoteId = async (id) => {
     try {
-        const data = await axios.get(`http://localhost:8001/api/v1/notes/${id}`);
+        const data = await axios.get(`http://localhost:8000/api/v1/notes/${id}`);
         if (data.status == 200) {
             return true;
         }
