@@ -1,0 +1,146 @@
+services:
+  # Database Service (starts first)
+  mariadb:
+    image: mariadb:10.9
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypass
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      # Optional: Mount init scripts
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+      interval: 10s
+
+  # Message Queue Service
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      timeout: 10s
+      retries: 5
+      interval: 10s
+
+  # Gateway Service
+  gateway:
+    build: 
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    ports:
+      - "8000:8000"
+    environment:
+      # Database connection
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=myuser
+      - DB_PASSWORD=mypass
+      - DB_NAME=mydb
+      # RabbitMQ connection
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      # Other microservices URLs
+      - NOTES_SERVICE_URL=http://notes-service:8001
+      - DESCRIPTIONS_SERVICE_URL=http://descriptions-service:8002
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      notes-service:
+        condition: service_started
+      descriptions-service:
+        condition: service_started
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  # Notes Microservice
+  notes-service:
+    build:
+      context: ./notes
+      dockerfile: Dockerfile
+    container_name: notes-service
+    ports:
+      - "8001:8001"
+    environment:
+      # Database connection
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=myuser
+      - DB_PASSWORD=mypass
+      - DB_NAME=mydb
+      # RabbitMQ connection
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      # Service configuration
+      - PORT=8001
+      - NODE_ENV=development
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  # Descriptions Microservice
+  descriptions-service:
+    build:
+      context: ./descriptions
+      dockerfile: Dockerfile
+    container_name: descriptions-service
+    ports:
+      - "8002:8002"
+    environment:
+      # Database connection
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=myuser
+      - DB_PASSWORD=mypass
+      - DB_NAME=mydb
+      # RabbitMQ connection
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      # Service configuration
+      - PORT=8002
+      - NODE_ENV=development
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+# Networks
+networks:
+  microservices-network:
+    driver: bridge
+
+# Persistent storage
+volumes:
+  mariadb_data:
+    driver: local
+  rabbitmq_data:
+    driver: local

@@ -2,10 +2,10 @@ import mariadb from "mariadb";
 import {createNotesTable} from "./queries.js";
 
 const pool = mariadb.createPool({
-  host: "localhost",
-  port: 3307,
-  user: "root",
-  password: "admin",
+  host: "mariadb",
+  port: 3306,
+  user: "myuser",
+  password: "mypass",
   database: "testdb",
   connectionLimit: 5,
 });
