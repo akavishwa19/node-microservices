@@ -11,10 +11,7 @@ const addNoteQuery = (queryObject: any): string => {
     })
     .join(",");
 
-
-  return `INSERT INTO notes (${columns}) VALUES(
-            ${values}
-    )`;
+  return `INSERT INTO notes (${columns}) VALUES(${values});`;
 };
 
 const fetchAllNotesQuery = (): string => {
@@ -36,11 +33,11 @@ const updateNoteQuery = (id: string, updateFields: any): string => {
     })
     .join(",");
 
-  return `UPDATE notes SET ${setClause} WHERE id='${id}'`;
+  return `UPDATE notes SET ${setClause} WHERE id='${id}';`;
 };
 
 const deleteNoteQuery = (id: string): string => {
-  return `DELETE FROM notes WHERE id='${id}'`;
+  return `DELETE FROM notes WHERE id='${id}';`;
 };
 
 export {
